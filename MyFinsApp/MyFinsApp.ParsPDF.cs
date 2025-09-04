@@ -1,15 +1,6 @@
 ﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using DocumentFormat.OpenXml.Spreadsheet;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+using DocumentFormat.OpenXml.Office2013.Word;
+using System.Text.Json;
 
 namespace MyFinsApp
 {
@@ -21,24 +12,42 @@ namespace MyFinsApp
         {
             using (var workbook = new XLWorkbook(@"C:\Users\Diago\OneDrive\Desktop\Statement 04.09.2024 - 04.09.2025.XLSX"))
             {
-                StreamWriter bd = new StreamWriter(@"C:\Users\Diago\OneDrive\Desktop\save.txt",true);
-
+                
                 var worksheet = workbook.Worksheet(1);
+
+                string filejson = @"C:\Users\Diago\OneDrive\Desktop\Save.json";
+                List<RealTransaction> translist = new List<RealTransaction>();
+                try
+                {
+                    string existingJson = File.ReadAllText(filejson);
+
+                    translist = JsonSerializer.Deserialize<List<RealTransaction>>(existingJson);
+                }
+                catch (Exception ex) { Console.WriteLine("Пук {0}",ex); }
 
                 // Чтение данных
                 for (int i = 2; i <= worksheet.RowsUsed().Count(); i++)
                 {
-                    var amount = worksheet.Cell(i, 8);
-                    var type = worksheet.Cell(i, 13);
-                    var date = worksheet.Cell(i, 1);
-                    var info = worksheet.Cell(i, 7);
-                    var category = worksheet.Cell(i, 11);
-                    var comment = worksheet.Cell(i, 15);
-                   
-                    bd.WriteLine(FormattableString.Invariant($"{amount.Value}|{type.Value}|{date.Value}|{info.Value}|{category.Value}|{comment.Value}")); 
+                    var amount = Convert.ToDouble(worksheet.Cell(i, 8).Value.ToString());
+                    var type = worksheet.Cell(i, 13).Value.ToString();
+                    var date = worksheet.Cell(i, 1).Value.ToString();
+                    var info = worksheet.Cell(i, 7).Value.ToString();
+                    var category = worksheet.Cell(i, 11).Value.ToString();
+                    var comment = worksheet.Cell(i, 15).Value.ToString();
 
+
+                    var realtrans = new RealTransaction(date, amount, info, category, comment);
+                    translist.Add(realtrans);
+                    
                 }
-                bd.Close();
+                
+                string jsonString = JsonSerializer.Serialize(translist, new JsonSerializerOptions
+                {
+                    WriteIndented = true // для красивого форматирования
+                });
+
+                File.WriteAllText(filejson, jsonString);
+
             }
         }
     }

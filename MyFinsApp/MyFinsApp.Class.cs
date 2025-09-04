@@ -11,11 +11,11 @@ namespace MyFinsApp
     /// </summary>
     public abstract class Transaction
     {
-        public DateTime Data { get; protected set; }
+        public string Data { get; protected set; }
         public double Value { get; protected set; }
         public string PlaceOperation { get; protected set; }
 
-        protected Transaction(DateTime data, int value, string placeoperation)
+        protected Transaction(string data, double value, string placeoperation)
         {
             Data = data;
             Value = value;
@@ -24,21 +24,30 @@ namespace MyFinsApp
     }
     public class RealTransaction : Transaction
     {
-        public int MSS { get; set; }
+        public string Category { get; set; }
 
-        public RealTransaction(DateTime data, int value, string place_operation, int mss)
-                : base(data, value, place_operation)
+        public string Comment { get; set; }
+        
+
+        public RealTransaction(string Data, double Value, string PlaceOperation, string Category, string Comment)
+                : base(Data, Value, PlaceOperation)
         {
-            MSS = mss;
+            this.Category = Category;
+            this.Comment = Comment;
         }
-        public DateTime GetData() //дата операции
+
+
+
+        public string GetData() //дата операции
             { return Data; }
         public double GetValue() //Сумма операции 
             { return Value; }
         public string GetPlaceOperation() //Получатель
             { return PlaceOperation; }
-        public int GetMSS() //MSS Код
-            { return MSS; }
+        public string GetCategory() //Категория
+            { return Category; }
+        public string GetComment()
+        { return Comment; }
     }
 }
 
