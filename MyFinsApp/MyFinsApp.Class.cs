@@ -12,7 +12,7 @@ namespace MyFinsApp
     public abstract class Transaction
     {
         public DateTime Data { get; protected set; }
-        public int Value { get; protected set; }
+        public double Value { get; protected set; }
         public string PlaceOperation { get; protected set; }
 
         protected Transaction(DateTime data, int value, string placeoperation)
@@ -21,8 +21,6 @@ namespace MyFinsApp
             Value = value;
             PlaceOperation = placeoperation;
         }
-        
-      
     }
     public class RealTransaction : Transaction
     {
@@ -33,14 +31,14 @@ namespace MyFinsApp
         {
             MSS = mss;
         }
-        public DateTime GetData()
+        public DateTime GetData() //дата операции
             { return Data; }
-        public int GetValue()
+        public double GetValue() //Сумма операции 
             { return Value; }
-        public string GetPlaceOperation()
+        public string GetPlaceOperation() //Получатель
             { return PlaceOperation; }
-        public int GetMSS() 
-        { return MSS; }
+        public int GetMSS() //MSS Код
+            { return MSS; }
     }
 }
 
